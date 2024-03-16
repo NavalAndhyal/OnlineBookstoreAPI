@@ -1,6 +1,7 @@
 ﻿using OnlineBookstoreAPI.Application.Service.Base;
 using OnlineBookstoreAPI.Domain.Models;
 using OnlineBookstoreAPI.Domain.Models.DTO;
+using OnlineBookstoreAPI.Domain.Models.Filter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,7 @@ namespace OnlineBookstoreAPI.Application.Service.UserService
     public interface IUserService : IBaseService<UserDto>
     {
         public Task<UserDto?> GetUserDtoForLogin(LoginDto loginDto);
+        public Task<IEnumerable<UserDto>?> GetUsers(RootFilter rootFilterDto);
 
     }
 }

@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using OnlineBookstoreAPI.Application.IRepository.UserRepo;
+using OnlineBookstoreAPI.Domain.Helpers;
 using OnlineBookstoreAPI.Domain.Models;
 using OnlineBookstoreAPI.Domain.Models.DTO;
+using OnlineBookstoreAPI.Domain.Models.Filter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,6 +43,17 @@ namespace OnlineBookstoreAPI.Application.Service.UserService
         {
             var result = await _userRepository.GetUserForLogin(_mapper.Map<Login>(loginDto));
             return _mapper.Map<UserDto>(result);
+        }
+
+        public async Task<IEnumerable<UserDto>?> GetUsers(RootFilter rootFilterDto)
+        {
+            var result = await _userRepository.GetAll();
+            if(rootFilterDto != null)
+            {
+                result = CompositeFilter<User>.ApplyFilter(result, rootFilterDto);
+            }
+            var users = _mapper.Map<List<UserDto>>(result);
+            return users;
         }
 
         public async Task<UserDto?> Insert(UserDto entity)

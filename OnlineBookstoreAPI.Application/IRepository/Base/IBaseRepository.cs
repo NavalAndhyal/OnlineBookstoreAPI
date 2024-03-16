@@ -8,7 +8,7 @@ namespace OnlineBookstoreAPI.Application.IRepository.Base
 {
     public interface IBaseRepository<T>
     {
-        Task<IEnumerable<T>?> GetAll();
+        Task<IQueryable<T>?> GetAll();
         Task<T?> FindById(int Id);
         Task<T?> Insert(T entity);
         Task<T?> Update(int id, T entity);

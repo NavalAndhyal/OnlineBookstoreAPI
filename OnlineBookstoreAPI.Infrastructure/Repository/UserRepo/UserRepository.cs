@@ -38,9 +38,9 @@ namespace OnlineBookstoreAPI.Infrastructure.Repository.UserRepo
             return User;
         }
 
-        public async Task<IEnumerable<User>?> GetAll()
+        public async Task<IQueryable<User>?> GetAll()
         {
-            return await _bookStoreContext.Users.Include(r => r.Role).ToListAsync();
+            return _bookStoreContext.Users.Include(r => r.Role).AsQueryable();
         }
 
         public async Task<User?> GetUserForLogin(Login login)
