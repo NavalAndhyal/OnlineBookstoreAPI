@@ -1,16 +1,22 @@
-﻿using OnlineBookstoreAPI.Domain.Models.Filter;
+﻿using OnlineBookstoreAPI.Domain.Models;
+using OnlineBookstoreAPI.Domain.Models.Filter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace OnlineBookstoreAPI.Domain.Helpers
 {
-    public static class CompositeFilter<T>
+    public static class CompositeFilter<T> where T : class
     {
+        static bool IsNullableType(Type t)
+        {
+            return t.IsGenericType && t.GetGenericTypeDefinition() == typeof(Nullable<>);
+        }
         private static Expression BuildFilterExpression(Filter filter, ParameterExpression parameter)
         {
             if (filter.Filters != null && filter.Filters.Any())
@@ -32,16 +38,40 @@ namespace OnlineBookstoreAPI.Domain.Helpers
 
             var property = Expression.Property(parameter, filter.Field);
             var constant = Expression.Constant(filter.Value);
-            
-            if(property.Type == typeof(string))
+
+            if (property.Type == typeof(string))
             {
                 constant = Expression.Constant(filter.Value.ToString());
             }
-            else if(property.Type == typeof(int))
+            else if (property.Type == typeof(int))
             {
                 //constant = Expression.Constant(Convert.ToInt32(filter.Value));
-                constant = Expression.Constant(Convert.ToInt32(((JsonElement)filter.Value).GetString()));
+                if (IsNullableType(property.Type) && !IsNullableType(constant.Type))
+                    constant = Expression.Constant(Convert.ToInt32(((JsonElement)filter.Value).GetString()), property.Type);
+                else
+                    constant = Expression.Constant(Convert.ToInt32(((JsonElement)filter.Value).GetString()));
             }
+            else if (property.Type == typeof(DateTime?))
+            {
+                if (IsNullableType(property.Type) && !IsNullableType(constant.Type))
+                    constant = Expression.Constant(((JsonElement)filter.Value).GetDateTime(),property.Type);
+                //var date = ((JsonElement)filter.Value).GetString();
+                //DateTime dateTime = new DateTime();
+                //if (DateTime.TryParse(date, out dateTime))
+                //{
+                //    Nullable<DateTime> dateTime1 = dateTime;
+                //    constant = Expression.Constant(dateTime1);
+                //}
+                //else
+                //{
+                //    throw new ArgumentException($"Unsupported Value of DateTime: {filter.Field}");
+                //}
+            }
+
+            //if (IsNullableType(property.Type) && !IsNullableType(constant.Type))
+            //    constant = Expression.Constant(filter.Value);
+            //else if (!IsNullableType(property.Type) && IsNullableType(constant.Type))
+            //    property = Expression.Property(Expression.Convert(property, constant.Type), filter.Field);
 
             switch (filter.Operator.ToLower())
             {
@@ -67,14 +97,21 @@ namespace OnlineBookstoreAPI.Domain.Helpers
                     var constantLower = Expression.Call(constant, typeof(string).GetMethod("ToLower", Type.EmptyTypes));
 
                     return Expression.Call(property, startsWithMethod, constantLower);
+                case "endswith":
+                    var endsWithMethod = typeof(string).GetMethod("EndsWith", new[] { typeof(string) });
 
+                    // Convert the constant value to lowercase for case-insensitive comparison
+                    var cl = Expression.Call(constant, typeof(string).GetMethod("ToLower", Type.EmptyTypes));
+
+                    return Expression.Call(property, endsWithMethod, cl);
                 // Add more operators as needed...
                 default:
                     throw new ArgumentException($"Unsupported operator: {filter.Operator}");
             }
+            
         }
 
-        private static Expression<Func<T, bool>> GetAndFilterExpression(List<Filter> filters)
+        private static Expression<Func<T, bool>> GetAndFilterExpression<T>(List<Filter> filters)
         {
             if (filters == null || !filters.Any())
                 return null;
@@ -107,7 +144,7 @@ namespace OnlineBookstoreAPI.Domain.Helpers
             return Expression.Lambda<Func<T, bool>>(andExpression, parameter);
         }
 
-        private static Expression<Func<T, bool>> GetOrFilterExpression(List<Filter> filters)
+        private static Expression<Func<T, bool>> GetOrFilterExpression<T>(List<Filter> filters)
         {
             if (filters == null || !filters.Any())
                 return null;
@@ -139,7 +176,7 @@ namespace OnlineBookstoreAPI.Domain.Helpers
 
             return Expression.Lambda<Func<T, bool>>(orExpression, parameter);
         }
-        public static IQueryable<T> ApplyFilter(IQueryable<T> query, RootFilter filter)
+        public static IQueryable<T> ApplyFilter<T>(IQueryable<T> query, FilterUtility filter)
         {
             if (filter == null || filter.Filters == null || !filter.Filters.Any())
                 return query;
@@ -148,16 +185,19 @@ namespace OnlineBookstoreAPI.Domain.Helpers
 
             if (filter.Logic?.ToLower() == "and")
             {
-                compositeFilterExpression = GetAndFilterExpression(filter.Filters);
+                compositeFilterExpression = GetAndFilterExpression<T>(filter.Filters);
             }
             else if (filter.Logic?.ToLower() == "or")
             {
-                compositeFilterExpression = GetOrFilterExpression(filter.Filters);
+                compositeFilterExpression = GetOrFilterExpression<T>(filter.Filters);
             }
 
             return compositeFilterExpression != null
                 ? query.Where(compositeFilterExpression)
                 : query;
         }
+
+      
+
     }
 }

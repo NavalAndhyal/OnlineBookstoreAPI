@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using OnlineBookstoreAPI.Application.Service.UserService;
 using OnlineBookstoreAPI.Domain.Models.DTO;
 using OnlineBookstoreAPI.Domain.Models.Filter;
+using OnlineBookstoreAPI.Domain.Models.Result;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -29,9 +30,9 @@ namespace OnlineBookstoreAPI.Controllers
         [Authorize(Roles = "Admin")]
         // GET: api/<UsersController>
         [HttpPost("GetUsersWithFilter")]
-        public async Task<IEnumerable<UserDto>?> GetUsersWithFilter([FromBody] RootFilter rootFilter)
+        public async Task<OperationResult<UserDto>?> GetUsersWithFilter([FromBody] FilterAndPaginationModel filterAndPaginationModel)
         {
-            return await _userService.GetUsers(rootFilter);
+            return await _userService.GetUsers(filterAndPaginationModel);
         }
         [Authorize(Roles = "Admin,User")]
 

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace OnlineBookstoreAPI.Domain.Models.Filter
 {
-    public class RootFilter
+    public class FilterUtility
     {
         public List<Filter>? Filters { get; set; }
         public string? Logic { get; set; }

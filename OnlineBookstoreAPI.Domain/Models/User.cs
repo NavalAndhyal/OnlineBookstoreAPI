@@ -20,7 +20,7 @@ namespace OnlineBookstoreAPI.Domain.Models
 
         public string? FullName { get; set; }
 
-        public DateTime? DateOfBirth { get; set; }
+        public Nullable<DateTime> DateOfBirth { get; set; }
 
         public DateTime? RegistrationDate { get; set; }
         public int RoleId { get; set; } // Foreign key to role

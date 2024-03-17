@@ -2,6 +2,7 @@
 using OnlineBookstoreAPI.Domain.Models;
 using OnlineBookstoreAPI.Domain.Models.DTO;
 using OnlineBookstoreAPI.Domain.Models.Filter;
+using OnlineBookstoreAPI.Domain.Models.Result;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace OnlineBookstoreAPI.Application.Service.UserService
     public interface IUserService : IBaseService<UserDto>
     {
         public Task<UserDto?> GetUserDtoForLogin(LoginDto loginDto);
-        public Task<IEnumerable<UserDto>?> GetUsers(RootFilter rootFilterDto);
+        public Task<OperationResult<UserDto>?> GetUsers(FilterAndPaginationModel filterAndPaginationModel);
 
     }
 }

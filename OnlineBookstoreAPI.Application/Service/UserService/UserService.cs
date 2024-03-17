@@ -4,7 +4,9 @@ using OnlineBookstoreAPI.Domain.Helpers;
 using OnlineBookstoreAPI.Domain.Models;
 using OnlineBookstoreAPI.Domain.Models.DTO;
 using OnlineBookstoreAPI.Domain.Models.Filter;
+using OnlineBookstoreAPI.Domain.Models.Result;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -45,15 +47,13 @@ namespace OnlineBookstoreAPI.Application.Service.UserService
             return _mapper.Map<UserDto>(result);
         }
 
-        public async Task<IEnumerable<UserDto>?> GetUsers(RootFilter rootFilterDto)
+        public async Task<OperationResult<UserDto>?> GetUsers(FilterAndPaginationModel filterAndPaginationModel)
         {
-            var result = await _userRepository.GetAll();
-            if(rootFilterDto != null)
-            {
-                result = CompositeFilter<User>.ApplyFilter(result, rootFilterDto);
-            }
-            var users = _mapper.Map<List<UserDto>>(result);
-            return users;
+            var query = await _userRepository.GetAll();
+            var pagedList = query!.ApplyFilterSortingPagination(filterAndPaginationModel);
+
+            var users = _mapper.Map<List<UserDto>>(pagedList);
+            return new OperationResult<UserDto>(pagedList.TotalCount, pagedList.TotalPages, pagedList.CurrentPage, pagedList.hasNext, pagedList.hasPrevious, users);
         }
 
         public async Task<UserDto?> Insert(UserDto entity)
