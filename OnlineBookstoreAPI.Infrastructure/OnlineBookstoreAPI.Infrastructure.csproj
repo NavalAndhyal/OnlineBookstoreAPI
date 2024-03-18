@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\OnlineBookstoreAPI.Domain\OnlineBookstoreAPI.Domain.csproj" />
+    <ProjectReference Include="..\OnlineBookstoreAPI.Application\OnlineBookstoreAPI.Application.csproj" />
   </ItemGroup>
 
 </Project>
