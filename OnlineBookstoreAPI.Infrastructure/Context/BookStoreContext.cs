@@ -1,11 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OnlineBookstoreAPI.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using OnlineBookstoreAPI.Domain.Models.Books;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OnlineBookstoreAPI.Infrastructure.Context
 {
@@ -14,10 +10,10 @@ namespace OnlineBookstoreAPI.Infrastructure.Context
         public BookStoreContext(DbContextOptions<BookStoreContext> options) : base(options) { }
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
+        public DbSet<Book> Books { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
     }

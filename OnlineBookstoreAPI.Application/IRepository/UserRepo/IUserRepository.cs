@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace OnlineBookstoreAPI.Application.IRepository.UserRepo
 {
-    public interface IUserRepository : IBaseRepository<User>
+    public interface IUserRepository : IBaseRepository<User,int>
     {
         public Task<User?> GetUserForLogin(Login login);
     }

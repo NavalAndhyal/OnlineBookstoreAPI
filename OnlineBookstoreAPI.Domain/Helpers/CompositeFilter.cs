@@ -51,27 +51,19 @@ namespace OnlineBookstoreAPI.Domain.Helpers
                 else
                     constant = Expression.Constant(Convert.ToInt32(((JsonElement)filter.Value).GetString()));
             }
+            else if (property.Type == typeof(Int16?))
+            {
+                //constant = Expression.Constant(Convert.ToInt32(filter.Value));
+                if (IsNullableType(property.Type) && !IsNullableType(constant.Type))
+                    constant = Expression.Constant(Convert.ToInt16(((JsonElement)filter.Value).GetString()), property.Type);
+                else
+                    constant = Expression.Constant(Convert.ToInt16(((JsonElement)filter.Value).GetString()));
+            }
             else if (property.Type == typeof(DateTime?))
             {
                 if (IsNullableType(property.Type) && !IsNullableType(constant.Type))
                     constant = Expression.Constant(((JsonElement)filter.Value).GetDateTime(),property.Type);
-                //var date = ((JsonElement)filter.Value).GetString();
-                //DateTime dateTime = new DateTime();
-                //if (DateTime.TryParse(date, out dateTime))
-                //{
-                //    Nullable<DateTime> dateTime1 = dateTime;
-                //    constant = Expression.Constant(dateTime1);
-                //}
-                //else
-                //{
-                //    throw new ArgumentException($"Unsupported Value of DateTime: {filter.Field}");
-                //}
             }
-
-            //if (IsNullableType(property.Type) && !IsNullableType(constant.Type))
-            //    constant = Expression.Constant(filter.Value);
-            //else if (!IsNullableType(property.Type) && IsNullableType(constant.Type))
-            //    property = Expression.Property(Expression.Convert(property, constant.Type), filter.Field);
 
             switch (filter.Operator.ToLower())
             {

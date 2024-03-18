@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using OnlineBookstoreAPI.Domain.Models;
+using OnlineBookstoreAPI.Domain.Models.Books;
 using OnlineBookstoreAPI.Domain.Models.DTO;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,7 @@ namespace OnlineBookstoreAPI.Application.Mapper
             CreateMap<UserDto,User>().ReverseMap();
             CreateMap<RoleDto,Role>().ReverseMap();
             CreateMap<LoginDto,Login>().ReverseMap();
+            CreateMap<BookDto,Book>().ReverseMap();
 
         }
     }

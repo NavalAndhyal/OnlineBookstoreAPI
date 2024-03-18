@@ -4,10 +4,13 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using OnlineBookstoreAPI.Application.IRepository.BookRepo;
 using OnlineBookstoreAPI.Application.IRepository.UserRepo;
 using OnlineBookstoreAPI.Application.Mapper;
+using OnlineBookstoreAPI.Application.Service.BookService;
 using OnlineBookstoreAPI.Application.Service.UserService;
 using OnlineBookstoreAPI.Infrastructure.Context;
+using OnlineBookstoreAPI.Infrastructure.Repository.BookRepo;
 using OnlineBookstoreAPI.Infrastructure.Repository.UserRepo;
 using System.Text;
 
@@ -29,6 +32,8 @@ namespace OnlineBookstoreAPI
             builder.Services.AddSqlServer<BookStoreContext>(configuration.GetConnectionString("StoreConnection"));
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<IBookService, BookService>();
+            builder.Services.AddScoped<IBookRepository, BookRepository>();
             // Auto Mapper Configurations
             var mapperConfig = new MapperConfiguration(mc =>
             {

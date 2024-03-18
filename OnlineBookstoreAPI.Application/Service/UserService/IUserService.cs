@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace OnlineBookstoreAPI.Application.Service.UserService
 {
-    public interface IUserService : IBaseService<UserDto>
+    public interface IUserService : IBaseService<UserDto,int>
     {
         public Task<UserDto?> GetUserDtoForLogin(LoginDto loginDto);
         public Task<OperationResult<UserDto>?> GetUsers(FilterAndPaginationModel filterAndPaginationModel);
